@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <script type="text/javascript">
+		function ajaxGet(url, sendResponse){
+			var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 302)){
+                    sendResponse({result : xhr.responseText});
+                }
+            }
+            xhr.open("GET", url, true);
+            xhr.send(null);
+		}
+        function getFriends(sendResponse){
+			var url = "http://friend.renren.com/friendsSelector.do?p="
+				+ "%7B%22init%22%3Afalse%2C%22qkey%22%3A%22friend%22%2C%22uid%22%3Atrue%2C%22uname%22%3Atrue%2C%22"
+				+ "uhead%22%3Atrue%2C%22limit%22%3A24%2C%22param%22%3A%7B%7D%2C%22query%22%3A%22%22%2C%22group%22%3A"
+				+ "%22%22%2C%22net%22%3A%22%22%2C%22page%22%3A%22false%22%7D&";
+            ajaxGet(url, sendResponse);
+        }
+		function getUserId(sendResponse){
+			var url = "http://notify.renren.com/wpi/getonlinecount.do";
+            ajaxGet(url, sendResponse);
+		}
+        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+            if (request.call == "getFriends"){
+                getFriends(sendResponse);
+            } else if (request.call == "getUserId"){
+				getUserId(sendResponse);
+			}
+        });
+    </script>
+</body>
+</html>
