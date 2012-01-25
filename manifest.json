@@ -11,6 +11,6 @@
     }
   ],
   "permissions": [
-  	"http://*.renren.com/*"
+      "http://*.renren.com/*"
   ]
 }

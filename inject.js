@@ -80,11 +80,11 @@ var last_check_time = parseInt(localStorage.last_check_time),
 
 if(isNaN(last_check_time) || 1 || (new_time-last_check_time)/60000 >= 1){
     localStorage.last_check_time = new_time;
-	chrome.extension.sendRequest({call: "getUserId"}, function(response) {
+    chrome.extension.sendRequest({call: "getUserId"}, function(response) {
         var user_id = JSON.parse(response.result)["hostid"];
-		chrome.extension.sendRequest({call: "getFriends"}, function(response) {
-			var friends = JSON.parse(response.result)["candidate"];
-			getLostFriends(friends, user_id);
-		});
-	});
+        chrome.extension.sendRequest({call: "getFriends"}, function(response) {
+            var friends = JSON.parse(response.result)["candidate"];
+            getLostFriends(friends, user_id);
+        });
+    });
 }
