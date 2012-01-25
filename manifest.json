@@ -1,6 +1,6 @@
 {
   "name": "你被删了",
-  "version": "1.4.0",
+  "version": "2.0.1",
   "description": "在人人网上有人与你解除好友关系时提醒你",
   "background_page": "background.html",
   "content_scripts": [

@@ -20,10 +20,29 @@ function getLostFriends(new_list, user_id){
         var old_list = JSON.parse(old_list_str);
         var lost_friends = getLostItemsByProperty(old_list, new_list, "id");
         if(lost_friends.length > 0){
-            notify(lost_friends);
+            checkDeactive(lost_friends, notify);
         }
     }
     localStorage[user_id] = JSON.stringify(new_list);
+}
+
+function checkDeactive(lost_friends, callback){
+    var base_url = "http://status.renren.com/GetSomeomeDoingList.do?userId=";
+    var results = [];
+    for(var i = 0, len = lost_friends.length; i < len; i++){
+        var friend = lost_friends[i],
+            tmp = {call: "isDeactived"};
+        tmp.url = base_url + friend.id;
+        chrome.extension.sendRequest(tmp, function(friend) {
+            return function(response){
+                friend.deactived = (JSON.parse(response.result).msg == "\u8be5\u7528\u6237\u5df2\u6ce8\u9500\u8d26\u53f7\u3002");
+                results.push(friend);
+                if(results.length == len){
+                    callback(results);
+                }
+            };
+        }(friend));
+    }
 }
 
 function notify(lost_friends) {
@@ -34,12 +53,15 @@ function notify(lost_friends) {
     div.style.left = (window.screen.width/2-250)+"px";
     div.style.top = "200px";
     document.body.appendChild(div);
-    html.push('<div class="title">被刪提醒</div><div class="options">' + '<div class="lost_head"> 很不幸的通知你，你失去了以下好友： </div><div class="friends">');
+    html.push('<div class="title">被刪提醒</div><div class="options">');
+    html.push('<div class="lost_head"> 很不幸的通知你，你失去了以下好友： </div>');
+    html.push('<div class="friends">');
     for (var i = lost_friends.length; i--;) {
         var friend = lost_friends[i];
         var name = friend.name,
             uid = friend.id,
             img = friend.head;
+        if(friend.deactived) name += "(销)";
         html.push('<div>');
         html.push('<a target="_blank" href="http://www.renren.com/profile.do?id=' + uid + '">');
         html.push('<img src="' + img + '" /><br>');
@@ -56,7 +78,7 @@ function notify(lost_friends) {
 var last_check_time = parseInt(localStorage.last_check_time),
     new_time = (new Date).getTime();
 
-if(isNaN(last_check_time) || (new_time-last_check_time)/60000 >= 5){
+if(isNaN(last_check_time) || 1 || (new_time-last_check_time)/60000 >= 1){
     localStorage.last_check_time = new_time;
 	chrome.extension.sendRequest({call: "getUserId"}, function(response) {
         var user_id = JSON.parse(response.result)["hostid"];

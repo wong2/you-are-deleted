@@ -26,11 +26,16 @@
 			var url = "http://notify.renren.com/wpi/getonlinecount.do";
             ajaxGet(url, sendResponse);
 		}
+        function getDeactive(url, sendResponse){
+            ajaxGet(url, sendResponse);
+        }
         chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
             if (request.call == "getFriends"){
                 getFriends(sendResponse);
             } else if (request.call == "getUserId"){
 				getUserId(sendResponse);
+            } else if (request.call == "isDeactived"){
+				getDeactive(request.url, sendResponse);
 			}
         });
     </script>
