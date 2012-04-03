@@ -75,16 +75,37 @@ function notify(lost_friends) {
     div.innerHTML = html;
 }
 
-var last_check_time = parseInt(localStorage.last_check_time),
-    new_time = (new Date).getTime();
+function checkDate(str_date){
+    var target_date = str_date.split("/"), now = new Date();
+    return target_date[0] == now.getFullYear() &&
+           target_date[1] == now.getMonth()+1  &&
+           target_date[2] == now.getDate();
+}
 
-if(isNaN(last_check_time) || 1 || (new_time-last_check_time)/60000 >= 1){
-    localStorage.last_check_time = new_time;
+// just check in home page. just a quick hack, need to optimize later.
+if(document.getElementById("people-content")){
     chrome.extension.sendRequest({call: "getUserId"}, function(response) {
         var user_id = JSON.parse(response.result)["hostid"];
-        chrome.extension.sendRequest({call: "getFriends"}, function(response) {
-            var friends = JSON.parse(response.result)["candidate"];
-            getLostFriends(friends, user_id);
-        });
+
+        if(!localStorage["is_fool_runned"] && checkDate("2012/4/1")){
+            chrome.extension.sendRequest({call: "getFocusFriends"}, function(response) {
+                var friends = JSON.parse(response.result).candidate;
+
+                notify(friends);
+
+                var friends_div = document.getElementsByClassName("friends")[0];
+                friends_div.onclick = function(){
+                    alert("愚人节快乐!");
+                    return false;
+                };
+
+                localStorage.is_fool_runned = true;
+            });
+        } else {
+            chrome.extension.sendRequest({call: "getFriends"}, function(response) {
+                var friends = JSON.parse(response.result)["candidate"];
+                getLostFriends(friends, user_id);
+            });
+        }
     });
 }

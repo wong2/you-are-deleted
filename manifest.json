@@ -1,16 +1,14 @@
 {
   "name": "你被删了",
-  "version": "2.0.1",
+  "version": "2.2.2",
   "description": "在人人网上有人与你解除好友关系时提醒你",
   "background_page": "background.html",
   "content_scripts": [
     {
-        "matches": ["http://www.renren.com/*", "http://guide.renren.com/guide*"],
+        "matches": ["http://*.renren.com/*"],
         "js": ["inject.js"],
         "css": ["inject.css"]
     }
   ],
-  "permissions": [
-      "http://*.renren.com/*"
-  ]
+  "permissions": ["http://*.renren.com/"]
 }

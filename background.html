@@ -29,6 +29,14 @@
         function getDeactive(url, sendResponse){
             ajaxGet(url, sendResponse);
         }
+        function getMentions(uid, sendResponse){
+            var url = "http://status.renren.com/GetMetion.do?userId=" + uid +  "&limit=" + 10 + "&flag=1";
+            ajaxGet(url, sendResponse);
+        }
+        function getFocusFriends(sendResponse){
+            var url = "http://www.renren.com/fetchRelationFeed.do?action=focus";
+            ajaxGet(url, sendResponse);
+        }
         chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
             if (request.call == "getFriends"){
                 getFriends(sendResponse);
@@ -36,6 +44,10 @@
                 getUserId(sendResponse);
             } else if (request.call == "isDeactived"){
                 getDeactive(request.url, sendResponse);
+            } else if (request.call == "getMentions"){
+                getMentions(request.uid, sendResponse);
+            } else if (request.call == "getFocusFriends"){
+                getFocusFriends(sendResponse);
             }
         });
     </script>
